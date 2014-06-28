@@ -48,10 +48,10 @@ public class EdgyAF {
 		Imshow imedge1 = new Imshow("Image1 edge"); 
 		Imshow imedge2 = new Imshow("Image2 edge"); 
 		
-		imnorm1.showImage(norm1);
-		imnorm2.showImage(norm2);
-		imedge1.showImage(edge1);
-		imedge2.showImage(edge2);
+		//imnorm1.showImage(norm1);
+		//imnorm2.showImage(norm2);
+		//imedge1.showImage(edge1);
+		//imedge2.showImage(edge2);
 		
 		//System.out.println("white1 = " + white1 + " white 2 =" + white2); 
 		
