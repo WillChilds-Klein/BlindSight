@@ -23,7 +23,7 @@ public class BlindSight{
 //		String input2 = "distrib/set3/changed/pair_0030_outbound.jpg";
 		
 		int upperThreshold = 7;
-		int lowerThreshold = 3;
+		int lowerThreshold = 5;
 		
 		double confidence;
 		double ratio = Blob.doBlob(input1, input2); 
