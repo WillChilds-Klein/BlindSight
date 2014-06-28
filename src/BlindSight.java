@@ -19,7 +19,11 @@ public class BlindSight{
 		
 		double countConf = GaussPrep.compare(input1, input2); 
 		double ratio = Blob.doBlob(input1, input2); 
-		double confidence = countConf; 
+		double confidence = countConf;
+		if (confidence < 0)
+			confidence = 0; 
+		else if (confidence > 100)
+			confidence = 100; 
 		if (ratio > 7)
 			confidence = 100; 
 		System.out.println(confidence); 
