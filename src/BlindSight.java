@@ -14,10 +14,10 @@ public class BlindSight{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		System.out.println("Correct\tWrong");
 		testAll();
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat input1 = Highgui.imread("/Users/austinstone/Desktop/inbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat input2 = Highgui.imread("/Users/austinstone/Desktop/outbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		EdgyAF.getEdgeConfidence(input1, input2); 
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//		Mat input1 = Highgui.imread("/Users/austinstone/Desktop/inbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+//		Mat input2 = Highgui.imread("/Users/austinstone/Desktop/outbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+//		EdgyAF.getEdgeConfidence(input1, input2); 
 	}
 	
 	public static void doSubtract() {
@@ -117,7 +117,7 @@ public class BlindSight{
 	
 	public static void testAll(){
 		
-		for(int i = 1; i <=3 ; i++){
+		for(int i = 1; i <=3; i++){
 			testMethods(i, true);
 			testMethods(i, false);
 		}
