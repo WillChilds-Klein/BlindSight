@@ -130,7 +130,7 @@ public class BlindSight{
 	
 	public static void testAll(){
 		
-		for(int i = 3; i <=3 ; i++){
+		for(int i = 1; i <=3; i++){
 			testMethods(i, true);
 			testMethods(i, false);
 		}

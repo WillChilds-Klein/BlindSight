@@ -66,8 +66,48 @@ public class Blob {
 //	}
 	
 /*	public static boolean isValid(int row, int col, int nRows, int nCols){
+	public static double maxToAvgOfSurroundingLayer(double[][] arr, double[] max){
+		if(max.length != 3)
+			return -1;
+		int maxRow = (int) max[1], maxCol = (int) max[2];
+		double layerSum = 0;
+		int nSquaresSurrounding = 0;
+		
+		if(isValid(maxRow-1, maxCol-1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow-1][maxCol-1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow-1, maxCol, arr.length, arr[0].length)){
+			layerSum += arr[maxRow-1][maxCol];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow-1, maxCol+1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow-1][maxCol+1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow, maxCol+1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow][maxCol+1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow+1, maxCol+1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow+1][maxCol+1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow+1, maxCol, arr.length, arr[0].length)){
+			layerSum += arr[maxRow+1][maxCol];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow+1, maxCol-1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow+1][maxCol-1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow, maxCol-1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow][maxCol-1];
+			nSquaresSurrounding++;
+		}
+			
+		System.out.println("!!!" + nSquaresSurrounding + "!!" + maxRow + " " + maxCol + " " + arr[maxRow][maxCol]);
+		
+		return max[0] / (layerSum / nSquaresSurrounding);
 		
 	}*/
+	
+	public static boolean isValid(int row, int col, int nRows, int nCols){
+		return (row >= 0 && col >= 0) && (row < nRows && col < nCols);
+	}  
 	
 	public static double sumVector(double[] vec){
 		double sum = 0;
@@ -130,5 +170,6 @@ public class Blob {
 //		}
 		
 		return ratio; 
+//		
 	}
 }	
