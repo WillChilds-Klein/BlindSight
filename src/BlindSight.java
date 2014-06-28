@@ -16,23 +16,29 @@ public class BlindSight{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		//System.out.println("Correct\tWrong");
 		
-		/** /
+		/**/
 		String input1 = args[0];
 		String input2 = args[1];
+//		String input1 = "distrib/set3/changed/pair_0030_inbound.jpg";
+//		String input2 = "distrib/set3/changed/pair_0030_outbound.jpg";
 		
-		double countConf = GaussPrep.compare(input1, input2); 
+		int upperThreshold = 7;
+		int lowerThreshold = 3;
+		
+		double confidence;
 		double ratio = Blob.doBlob(input1, input2); 
-		double confidence = countConf;
-		if (confidence < 0)
-			confidence = 0; 
-		else if (confidence > 100)
-			confidence = 100; 
-		if (ratio > 7)
-			confidence = 100; 
-		System.out.println(confidence); 
+		if (ratio > upperThreshold)
+			confidence = 100;
+		else if(ratio < upperThreshold && ratio > lowerThreshold)
+			confidence = (ratio-lowerThreshold) / (upperThreshold-lowerThreshold) * 100;
+		else
+			confidence = 0;
+		
+		
+		System.out.println(confidence);// + " ratio: " + ratio); 
 		/**/
 		
-		testAll(); 
+		//testAll(); 
 	}
 	
 	public static double compare(String file1, String file2) {

@@ -18,13 +18,14 @@ import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.features2d.Features2d;
 import org.opencv.features2d.KeyPoint;
-import org.opencv.highgui.Highgui;
+//import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import com.atul.JavaOpenCV.Imshow;
 
 public class Preprocess {
 	
+	public static int BLUR_PARAM = 21;
 	public final double SCALE_PER_POINT = 5;
 	
 	public static Mat multiChannelHistEq(Mat input) {
@@ -43,7 +44,7 @@ public class Preprocess {
 		return output;
 	}
 
-	public static void matchFeatures(Mat m2, Mat m2_out){
+	public static Mat[] matchFeatures(Mat m2, Mat m2_out){
 		Mat m3 = new Mat();
 		FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
 		DescriptorExtractor extractor = DescriptorExtractor.create(DescriptorExtractor.SURF);
@@ -97,20 +98,27 @@ public class Preprocess {
 		obj.fromList(obj_list);
 		scene.fromList(scene_list);
 
-		Mat H = Calib3d.findHomography(obj, scene, Calib3d.RANSAC, 1);
-		
-		Mat m2_out_warped = new Mat(m2_out.size(), m2_out.type());
-		Imgproc.warpPerspective(m2_out, m2_out_warped, H, m2_out_warped.size());
+		Mat m2_out_warped = null;
+		if(matchesList2.size() >= 4){
+			Mat H = Calib3d.findHomography(obj, scene, Calib3d.RANSAC, 1);
+			
+			m2_out_warped = new Mat(m2_out.size(), m2_out.type());
+			Imgproc.warpPerspective(m2_out, m2_out_warped, H, m2_out_warped.size());
+			/** /
+			Imshow im5 = new Imshow("changed and rotated");
+			im5.showImage(m2_out_warped);
+			Imshow im6 = new Imshow("subtraction");
+			im6.showImage(BlindSight.subtract(m2_out_warped, m2));
+			/**/
+			Mat[] output = {m2, m2_out_warped};
+			return output;
+		}
 		
 //		Imshow im4 = new Imshow("original");
 //		im4.showImage(m2);
-//		
-//		Imshow im5 = new Imshow("changed and rotated");
-//		im5.showImage(m2_out_warped);
-//		
-//
-//		Imshow im6 = new Imshow("subtraction");
-//		im6.showImage(GaussPrep.subtract(m2_out_warped, m2));
+		
+		Mat[] output = {m2, m2_out};
+		return output;
 	}
 	
 	public static List<DMatch> goodMatches(MatOfDMatch matches) {
@@ -175,34 +183,34 @@ public class Preprocess {
 		for(int i = 0; i < numThresholds; i++){
 			output[i] = new Mat(input.size(), input.type());
 			threshold_value = (int) (((float) (i+1) / ((float) numThresholds+1) )* (float) max_value);
-			System.out.println("Threshhold val = " + threshold_type); 
+//			System.out.println("Threshhold val = " + threshold_type); 
 			Imgproc.threshold(input, output[i], threshold_value, max_value, threshold_type);
-			System.out.println(" i = " + threshold_value);
+//			System.out.println(" i = " + threshold_value);
 		}
 		
 		return output;
 	}
 	
-	public static void main(String[] args) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
-	    
-		String file1 = "distrib/set3/changed/pair_0018_inbound.jpg";
-		String file2 = "distrib/set3/changed/pair_0018_outbound.jpg";
-		
-		Mat m = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_COLOR);
-		Mat m_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_COLOR);
-		Mat m1 = new Mat(m.size(), CvType.CV_8UC1);
-		Mat m1_out = new Mat(m_out.size(), CvType.CV_8UC1);
-
-		m1 = multiChannelHistEq(m);
-		m1_out = multiChannelHistEq(m_out);
-		
-		m1 = blur(m1, 21);
-		m1_out = blur(m1_out, 21);
-		
-		matchFeatures(m1, m1_out);
-		
-		return;
-	}
+//	public static void main(String[] args) {
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
+//	    
+//		String file1 = "distrib/set3/unchanged/pair_0938_inbound.jpg";
+//		String file2 = "distrib/set3/unchanged/pair_0938_outbound.jpg";
+//		
+//		Mat m = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_COLOR);
+//		Mat m_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_COLOR);
+//		Mat m1 = new Mat(m.size(), CvType.CV_8UC1);
+//		Mat m1_out = new Mat(m_out.size(), CvType.CV_8UC1);
+//
+//		m1 = multiChannelHistEq(m);
+//		m1_out = multiChannelHistEq(m_out);
+//		
+//		m1 = blur(m1, BLUR_PARAM);
+//		m1_out = blur(m1_out, BLUR_PARAM);
+//		
+//		matchFeatures(m1, m1_out);
+//		
+//		return;
+//	}
 	
 }
