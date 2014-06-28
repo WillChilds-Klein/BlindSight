@@ -61,7 +61,15 @@ System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		Core.add(m5, m5_out, m6);
 			
 		
-		
+//		Imshow im = new Imshow("regular subtraction");
+//		im.showImage(m5);
+//		
+//		Imshow im2 = new Imshow("fucky subtraction");
+//		im2.showImage(m5_out);
+//		
+//		Imshow im3 = new Imshow("all mish-mashed togetha");
+//		im3.showImage(m6);
+
 		return true;
 	}
 }
