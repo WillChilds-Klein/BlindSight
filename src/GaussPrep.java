@@ -31,11 +31,11 @@ public class GaussPrep {
 		return output;
 	}
 	
-	public static void main(String[] args) {
+	public static boolean compare(String file1, String file2) {
 System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
-		Mat m1 = Highgui.imread("distrib/set2/changed/pair_0011_before.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat m1_out = Highgui.imread("distrib/set2/changed/pair_0011_later.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1 = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
 		Mat m2 = new Mat(m1.size(), m1.type());
 		Mat m2_out = new Mat(m1.size(), m1.type());
 		Mat m3 = new Mat(m1.size(), m1.type());
@@ -60,13 +60,17 @@ System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		Core.add(m5, m5_out, m6);
 		
-		Imshow im = new Imshow("regular subtraction");
-		im.showImage(m5);
+//		Imshow im = new Imshow("regular subtraction");
+//		im.showImage(m5);
+//		
+//		Imshow im2 = new Imshow("fucky subtraction");
+//		im2.showImage(m5_out);
+//		
+//		Imshow im3 = new Imshow("all mish-mashed togetha");
+//		im3.showImage(m6);
+			
 		
-		Imshow im2 = new Imshow("fucky subtraction");
-		im2.showImage(m5_out);
 		
-		Imshow im3 = new Imshow("all mish-mashed togetha");
-		im3.showImage(m6);
+		return true;
 	}
 }

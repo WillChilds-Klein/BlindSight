@@ -1,3 +1,6 @@
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
@@ -9,21 +12,8 @@ public class BlindSight{
 	
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
-		
-		Mat m1 = Highgui.imread("distrib/set1/changed/lena.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
-//		Mat m2 = new Mat(m1.size(), m1.type());
-		
-		
-		
-//		Imshow im = new Imshow("Original Image"); 
-//		im.showImage(m1);
-		
-		Mat[] arr = grayscaleToThreshold(RGBtoGrayscale(m1), 5);
-		
-		Mat m2 = arr[2];
-		
-		Imshow im2 = new Imshow("middle threshold");
-		im2.showImage(m2);
+		System.out.println("Correct\tWrong");
+		testAll();
 	}
 	
 	public static Mat[] grayscaleToThreshold(Mat input, int numThresholds){
@@ -47,5 +37,53 @@ public class BlindSight{
 		Mat output = new Mat(input.size(), input.type());
 		Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2GRAY);
 		return output;
+	}
+	
+	public static void testAll(){
+		
+		for(int i = 1; i <=3 ; i++){
+			testMethods(i, true);
+			testMethods(i, false);
+		}
+	}
+	
+	public static void testMethods(int setNum, boolean changed){
+		int numTrue = 0, numFalse = 0;
+		int count = 50, i = 0;
+		
+		DecimalFormat formatter = new DecimalFormat("0000");
+		String beg = "set"+ setNum + "/" + (changed? "changed" : "unchanged") + "/pair_", end1, end2;
+		
+		if(setNum == 2){
+			end1 = "_before.jpg";
+			end2 = "_later.jpg";
+			i = changed? 1 : 0;
+			
+			count = i == 1? 51 : 50;
+		}else {
+			end1 = "_inbound.jpg";
+			end2 = "_outbound.jpg";
+			if(setNum == 3 && !changed){
+				i = 932; 
+				count = 932 + 51;
+			} else if (setNum == 1 && changed){
+				i = 1;
+				count = 51;
+			}
+			
+		}
+		
+		for( ; i < count; i+=2){
+			String file1 = beg + formatter.format(i) + end1;
+			String file2 = beg + formatter.format(i) + end2;
+
+			if(GaussPrep.compare(file1, file2) == changed){
+				numTrue++;
+			}
+			else
+				numFalse++;
+		}
+		System.out.println(numTrue+"\t"+numFalse);
+	
 	}
 }
