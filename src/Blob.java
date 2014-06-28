@@ -31,6 +31,45 @@ public class Blob {
 		return output;
 	}
 	
+	// returns array: {[maxRatio],[maxRow],[maxCol]}
+	public static double[] maxToAvgRatio(double[][] arr){
+		double max = -1, sum = 0, ratio, avg;
+		double output[] = new double[3];
+		for(int i = 0; i < arr.length; i++){
+			for(int j = 0; j < arr[0].length; j++){
+				if(arr[i][j] > max){
+					max = arr[i][j];
+					output[1] = i;
+					output[2] = j;
+				}
+				sum += arr[i][j];
+			}
+		}
+		avg = sum / (arr.length * arr[0].length);
+		ratio = max / avg;
+		
+		output[0] = ratio;
+		return output;
+	}
+	
+	// array @param max is array output by maxToAvgRatio
+	// returns ratio of maxVal to avg of 8(ish) surrounding squares
+//	public static double maxToAvgOfSurroundingLayer(double[][] arr, double[] max){
+//		if(max.length != 3)
+//			return -1;
+//		int maxRow = (int) max[1], maxCol = (int) max[2];
+//		double layerSum = 0, nSquaresSurrounding = 0;
+//		
+//		if(is){
+//			layerSum += ;
+//		}
+//		
+//	}
+	
+	public static boolean isValid(int row, int col, int nRows, int nCols){
+		
+	}
+	
 	public static double sumVector(double[] vec){
 		double sum = 0;
 		for(double d : vec)
