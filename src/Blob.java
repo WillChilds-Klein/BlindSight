@@ -3,18 +3,13 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-//import com.atul.JavaOpenCV.Imshow;
-
-
 public class Blob {
+	
 	// cuts off lower right portion of image in case of non-squareness
 	public static double[][] getSubmatrixSums(Mat input, int submatrixSize){
 		int nRows = input.rows() / submatrixSize;
 		int nCols = input.cols() / submatrixSize;
-		
-//		System.out.println(nRows);
-//		System.out.println(nCols);
-//		
+
 		double bigSum = sumVector(Core.sumElems(input).val);
 		
 		double[][] output = new double[nRows][nCols];
@@ -53,19 +48,6 @@ public class Blob {
 	
 	// array @param max is array output by maxToAvgRatio
 	// returns ratio of maxVal to avg of 8(ish) surrounding squares
-//	public static double maxToAvgOfSurroundingLayer(double[][] arr, double[] max){
-//		if(max.length != 3)
-//			return -1;
-//		int maxRow = (int) max[1], maxCol = (int) max[2];
-//		double layerSum = 0, nSquaresSurrounding = 0;
-//		
-//		if(is){
-//			layerSum += ;
-//		}
-//		
-//	}
-	
-/*	public static boolean isValid(int row, int col, int nRows, int nCols){
 	public static double maxToAvgOfSurroundingLayer(double[][] arr, double[] max){
 		if(max.length != 3)
 			return -1;
@@ -99,11 +81,9 @@ public class Blob {
 			nSquaresSurrounding++;
 		}
 			
-		System.out.println("!!!" + nSquaresSurrounding + "!!" + maxRow + " " + maxCol + " " + arr[maxRow][maxCol]);
-		
 		return max[0] / (layerSum / nSquaresSurrounding);
 		
-	}*/
+	}
 	
 	public static boolean isValid(int row, int col, int nRows, int nCols){
 		return (row >= 0 && col >= 0) && (row < nRows && col < nCols);
@@ -132,8 +112,8 @@ public class Blob {
 		Mat m5_out = new Mat(m1.size(), m1.type());
 		Mat m6 = new Mat(m1.size(), m1.type());
 
-		m2 = GaussPrep.blur(m1, 55);
-		m2_out = GaussPrep.blur(m1_out, 55);
+		m2 = Preprocess.blur(m1, 55);
+		m2_out = Preprocess.blur(m1_out, 55);
 		
 		Imgproc.equalizeHist(m2, m3);
 		Imgproc.equalizeHist(m2_out, m3_out);
@@ -141,19 +121,10 @@ public class Blob {
 		Core.normalize(m2, m4);
 		Core.normalize(m2_out, m4_out);
 		
-		m5 = GaussPrep.subtract(m3, m3_out);
-		m5_out = GaussPrep.subtract(m3_out, m3);
+		m5 = BlindSight.subtract(m3, m3_out);
+		m5_out = BlindSight.subtract(m3_out, m3);
 		
 		Core.add(m5, m5_out, m6);
-		
-//		Imshow im = new Imshow("regular subtraction");
-//		im.showImage(m5);
-//		
-//		Imshow im2 = new Imshow("fucky subtraction");
-//		im2.showImage(m5_out);
-		
-//		Imshow im3 = new Imshow("all mish-mashed togetha");
-//		im3.showImage(m6);
 		
 		int pix = 20;
 		double[][] test = getSubmatrixSums(m6, pix);
@@ -170,6 +141,6 @@ public class Blob {
 //		}
 		
 		return ratio; 
-//		
 	}
+	
 }	

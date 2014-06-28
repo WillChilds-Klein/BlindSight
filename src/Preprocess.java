@@ -11,6 +11,7 @@ import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.features2d.DMatch;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
@@ -23,7 +24,9 @@ import org.opencv.imgproc.Imgproc;
 import com.atul.JavaOpenCV.Imshow;
 
 public class Preprocess {
-
+	
+	public final double SCALE_PER_POINT = 5;
+	
 	public static Mat multiChannelHistEq(Mat input) {
 		List<Mat> channels = new ArrayList<Mat>();
 		Core.split(input, channels);
@@ -78,14 +81,14 @@ public class Preprocess {
 		im3.showImage(m3);
 
 		// obj => m2, scene => m2_out
-		List<Point> obj_list = new ArrayList();
-		List<Point> scene_list = new ArrayList();
+		List<Point> obj_list = new ArrayList<Point>();
+		List<Point> scene_list = new ArrayList<Point>();
 			
 		List<KeyPoint> keypoints_list = keypoints.toList();
 		List<KeyPoint> keypoints_out_list = keypoints_out.toList();
 		
 		for( int i = 0; i < matchesList2.size(); i++ ){
-			//-- Get the keypoints from the good matches
+			// Get the keypoints from the good matches
 		    obj_list.add(keypoints_list.get(matchesList2.get(i).queryIdx).pt);
 		    scene_list.add(keypoints_out_list.get(matchesList2.get(i).trainIdx).pt);
 		}
@@ -93,26 +96,21 @@ public class Preprocess {
 		MatOfPoint2f scene = new MatOfPoint2f();
 		obj.fromList(obj_list);
 		scene.fromList(scene_list);
-		
-		System.out.println("obj len = "+keypoints_list.size()+"scene len"+scene_list.size());
 
 		Mat H = Calib3d.findHomography(obj, scene, Calib3d.RANSAC, 1);
 		
-//		MatOfPoint2f obj_corners = new MatOfPoint2f();
-//		obj_corners[0] = new Point(0,0);
-//		obj_corners[1] = new Point(img_object.cols, 0 );
-//		obj_corners[2] = new Point(img_object.cols, img_object.rows ); 
-//		obj_corners[3] = new Point(0, img_object.rows );
-//		MatOfPoint2f scene_corners = new MatOfPoint2f();;
 		Mat m2_out_warped = new Mat(m2_out.size(), m2_out.type());
 		Imgproc.warpPerspective(m2_out, m2_out_warped, H, m2_out_warped.size());
-//		Core.perspectiveTransform(m2_out, m2_out_warped, H);
 		
-		Imshow im4 = new Imshow("original");
-		im4.showImage(m2);
-		
-		Imshow im5 = new Imshow("changed and rotated");
-		im5.showImage(m2_out_warped);
+//		Imshow im4 = new Imshow("original");
+//		im4.showImage(m2);
+//		
+//		Imshow im5 = new Imshow("changed and rotated");
+//		im5.showImage(m2_out_warped);
+//		
+//
+//		Imshow im6 = new Imshow("subtraction");
+//		im6.showImage(GaussPrep.subtract(m2_out_warped, m2));
 	}
 	
 	public static List<DMatch> goodMatches(MatOfDMatch matches) {
@@ -138,7 +136,53 @@ public class Preprocess {
 		}
 		return goodMatchesList;
 	}
-
+	
+	// blurSize must be odd and < either dim of image
+	public static Mat blur(Mat input, int blurSize){
+		Mat output = new Mat(input.size(), input.type());
+		Size size = new Size(blurSize, blurSize);
+		
+		Imgproc.GaussianBlur(input, output, size, 0);
+		return output;
+	}
+	
+	public static Mat RGBtoGrayscale(Mat input){
+		Mat output = new Mat(input.size(), input.type());
+		Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2GRAY);
+		return output;
+	}
+	
+	public static Mat normalize(Mat m) {
+		Mat norm1 = new Mat(m.rows(), m.cols(), m.type()); 
+		m.convertTo(norm1, CvType.CV_32FC3, 1.0/255.5);
+        Core.normalize(norm1, norm1);
+		return norm1; 
+	}
+	
+	public static Mat convertBack(Mat m) {
+		Mat convert = new Mat(m.rows(), m.cols(), m.type()); 
+		m.convertTo(convert, CvType.CV_8U, 255*10);
+		return convert; 
+	}
+	
+	public static Mat[] grayscaleToThreshold(Mat input, int numThresholds){
+		int threshold_value = 0;
+		int threshold_type = Imgproc.THRESH_BINARY;
+		int max_value = 255;
+		
+		Mat[] output = new Mat[numThresholds];
+		
+		for(int i = 0; i < numThresholds; i++){
+			output[i] = new Mat(input.size(), input.type());
+			threshold_value = (int) (((float) (i+1) / ((float) numThresholds+1) )* (float) max_value);
+			System.out.println("Threshhold val = " + threshold_type); 
+			Imgproc.threshold(input, output[i], threshold_value, max_value, threshold_type);
+			System.out.println(" i = " + threshold_value);
+		}
+		
+		return output;
+	}
+	
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 	    
@@ -153,14 +197,12 @@ public class Preprocess {
 		m1 = multiChannelHistEq(m);
 		m1_out = multiChannelHistEq(m_out);
 		
-		m1 = GaussPrep.blur(m1, 21);
-		m1_out = GaussPrep.blur(m1_out, 21);
-//		
-//		m1 = Normalize.convertBack(Normalize.normalize(m1));
-//		m1_out = Normalize.convertBack(Normalize.normalize(m1_out));
+		m1 = blur(m1, 21);
+		m1_out = blur(m1_out, 21);
 		
 		matchFeatures(m1, m1_out);
 		
 		return;
 	}
+	
 }
