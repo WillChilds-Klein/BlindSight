@@ -1,7 +1,9 @@
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
+
+//import com.atul.JavaOpenCV.Imshow;
 
 public class Blob {
 	
@@ -100,36 +102,30 @@ public class Blob {
 		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
-		Mat m1 = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat m1_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat m2 = new Mat(m1.size(), m1.type());
-		Mat m2_out = new Mat(m1.size(), m1.type());
-		Mat m3 = new Mat(m1.size(), m1.type());
-		Mat m3_out = new Mat(m1.size(), m1.type());
-		Mat m4 = new Mat(m1.size(), m1.type());		
-		Mat m4_out = new Mat(m1.size(), m1.type());
-		Mat m5 = new Mat(m1.size(), m1.type());
-		Mat m5_out = new Mat(m1.size(), m1.type());
-		Mat m6 = new Mat(m1.size(), m1.type());
-
-		m2 = Preprocess.blur(m1, 55);
-		m2_out = Preprocess.blur(m1_out, 55);
+		Mat m1 = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m1_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m2 = new Mat(m1.size(), CvType.CV_8UC1);
+		Mat m2_out = new Mat(m1.size(), CvType.CV_8UC1);
+		Mat m3 = new Mat(m2.size(), m2.type());
 		
-		Imgproc.equalizeHist(m2, m3);
-		Imgproc.equalizeHist(m2_out, m3_out);
+		m2 = Preprocess.multiChannelHistEq(m1);
+		m2_out = Preprocess.multiChannelHistEq(m1_out);
 		
-		Core.normalize(m2, m4);
-		Core.normalize(m2_out, m4_out);
+		m2 = Preprocess.blur(m2, Preprocess.BLUR_PARAM);
+		m2_out = Preprocess.blur(m2_out, Preprocess.BLUR_PARAM);
 		
-		m5 = BlindSight.subtract(m3, m3_out);
-		m5_out = BlindSight.subtract(m3_out, m3);
+		Mat[] hope = Preprocess.matchFeatures(m2, m2_out);
+		m2 = hope[0];
+		m2_out = hope[1];
 		
-		Core.add(m5, m5_out, m6);
+		m3 = BlindSight.subtract(m2_out, m2);
 		
-		int pix = 20;
-		double[][] test = getSubmatrixSums(m6, pix);
+//		Imshow im = new Imshow("da truth");
+//		im.showImage(m3);
+		
+		int pix = 40;
+		double[][] test = getSubmatrixSums(m3, pix);
 		double ratio = maxToAvgRatio(test)[0]; 
-		
 		
 //		System.out.println("[" + test.length + ", " + test[0].length + "]");
 //		for(int i = 0; i < test.length; i++){
