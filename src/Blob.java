@@ -54,21 +54,48 @@ public class Blob {
 	
 	// array @param max is array output by maxToAvgRatio
 	// returns ratio of maxVal to avg of 8(ish) surrounding squares
-//	public static double maxToAvgOfSurroundingLayer(double[][] arr, double[] max){
-//		if(max.length != 3)
-//			return -1;
-//		int maxRow = (int) max[1], maxCol = (int) max[2];
-//		double layerSum = 0, nSquaresSurrounding = 0;
-//		
-//		if(is){
-//			layerSum += ;
-//		}
-//		
-//	}
-	
-	public static boolean isValid(int row, int col, int nRows, int nCols){
+	public static double maxToAvgOfSurroundingLayer(double[][] arr, double[] max){
+		if(max.length != 3)
+			return -1;
+		int maxRow = (int) max[1], maxCol = (int) max[2];
+		double layerSum = 0;
+		int nSquaresSurrounding = 0;
+		
+		if(isValid(maxRow-1, maxCol-1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow-1][maxCol-1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow-1, maxCol, arr.length, arr[0].length)){
+			layerSum += arr[maxRow-1][maxCol];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow-1, maxCol+1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow-1][maxCol+1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow, maxCol+1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow][maxCol+1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow+1, maxCol+1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow+1][maxCol+1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow+1, maxCol, arr.length, arr[0].length)){
+			layerSum += arr[maxRow+1][maxCol];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow+1, maxCol-1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow+1][maxCol-1];
+			nSquaresSurrounding++;
+		} if(isValid(maxRow, maxCol-1, arr.length, arr[0].length)){
+			layerSum += arr[maxRow][maxCol-1];
+			nSquaresSurrounding++;
+		}
+			
+		System.out.println("!!!" + nSquaresSurrounding + "!!" + maxRow + " " + maxCol + " " + arr[maxRow][maxCol]);
+		
+		return max[0] / (layerSum / nSquaresSurrounding);
 		
 	}
+	
+	public static boolean isValid(int row, int col, int nRows, int nCols){
+		return (row >= 0 && col >= 0) && (row < nRows && col < nCols);
+	}  
 	
 	public static double sumVector(double[] vec){
 		double sum = 0;
@@ -78,10 +105,13 @@ public class Blob {
 	}
 	
 	public static void main(String[] args) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
+System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
-		Mat m1 = Highgui.imread("set1/changed/pair_0011_inbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat m1_out = Highgui.imread("set1/changed/pair_0011_outbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		String file1 = "distrib/set1/changed/pair_0009_inbound.jpg";
+		String file2 = "distrib/set1/changed/pair_0009_outbound.jpg";
+
+		Mat m1 = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
 		Mat m2 = new Mat(m1.size(), m1.type());
 		Mat m2_out = new Mat(m1.size(), m1.type());
 		Mat m3 = new Mat(m1.size(), m1.type());
@@ -111,7 +141,7 @@ public class Blob {
 //		
 //		Imshow im2 = new Imshow("fucky subtraction");
 //		im2.showImage(m5_out);
-		
+//		
 		Imshow im3 = new Imshow("all mish-mashed togetha");
 		im3.showImage(m6);
 		
@@ -125,5 +155,9 @@ public class Blob {
 			}
 			System.out.print("]\n");
 		}
+		
+		double[] max = maxToAvgRatio(test);
+		test[0][0] = 1; max[1] = 6; max[2] = 0;
+		System.out.println(maxToAvgOfSurroundingLayer(test, max));
 	}
 }	
