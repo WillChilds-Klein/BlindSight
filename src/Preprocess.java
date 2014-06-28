@@ -1,28 +1,166 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.features2d.DMatch;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.features2d.Features2d;
+import org.opencv.features2d.KeyPoint;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import com.atul.JavaOpenCV.Imshow;
 
 public class Preprocess {
 
-	public static Mat multiChannelHistEq(Mat input){
+	public static Mat multiChannelHistEq(Mat input) {
 		List<Mat> channels = new ArrayList<Mat>();
 		Core.split(input, channels);
-		
+
 		Imgproc.equalizeHist(channels.get(0), channels.get(0));
 		Imgproc.equalizeHist(channels.get(1), channels.get(1));
 		Imgproc.equalizeHist(channels.get(2), channels.get(2));
-		
+
 		Mat merge = new Mat(input.size(), CvType.CV_8UC3);
 		Core.merge(channels, merge);
 		Mat output = new Mat(input.size(), CvType.CV_8UC1);
-		Imgproc.cvtColor(merge, output, Imgproc.COLOR_BayerGR2GRAY);
-		
+		Imgproc.cvtColor(merge, output, Imgproc.COLOR_BGR2GRAY);
+
 		return output;
 	}
+
+	public static void matchFeatures(Mat m2, Mat m2_out){
+		Mat m3 = new Mat();
+		FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
+		DescriptorExtractor extractor = DescriptorExtractor.create(DescriptorExtractor.SURF);
+		DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
+		
+		
+		MatOfKeyPoint keypoints = new MatOfKeyPoint();
+		MatOfKeyPoint keypoints_out = new MatOfKeyPoint();
+		detector.detect(m2, keypoints);
+		detector.detect(m2_out, keypoints_out);
+		
+		ArrayList<MatOfDMatch> matches = new ArrayList<MatOfDMatch>();
+		
+		matches.add(new MatOfDMatch());
+		
+		Mat descriptor1 = new Mat();
+		Mat descriptor2 = new Mat();
+		
+		extractor.compute(m2, keypoints, descriptor1);
+		extractor.compute(m2_out, keypoints_out, descriptor2);
+		
+		matcher.match(descriptor1, descriptor2, matches.get(0));
+		
+		List<DMatch> matchesList2 = goodMatches(matches.get(0));
+		
+		MatOfDMatch match = new MatOfDMatch();
+		match.fromList(matchesList2);
+		
+		Imshow im3 = new Imshow("Matches");
+
+		Features2d.drawMatches(m2, keypoints, m2_out, keypoints_out,
+				match, m3, new Scalar(0, 255, 0),
+				new Scalar(0, 0, 255), new MatOfByte(),
+				Features2d.NOT_DRAW_SINGLE_POINTS);
+		im3.showImage(m3);
+
+		// obj => m2, scene => m2_out
+		List<Point> obj_list = new ArrayList();
+		List<Point> scene_list = new ArrayList();
+			
+		List<KeyPoint> keypoints_list = keypoints.toList();
+		List<KeyPoint> keypoints_out_list = keypoints_out.toList();
+		
+		for( int i = 0; i < matchesList2.size(); i++ ){
+			//-- Get the keypoints from the good matches
+		    obj_list.add(keypoints_list.get(matchesList2.get(i).queryIdx).pt);
+		    scene_list.add(keypoints_out_list.get(matchesList2.get(i).trainIdx).pt);
+		}
+		MatOfPoint2f obj = new MatOfPoint2f();
+		MatOfPoint2f scene = new MatOfPoint2f();
+		obj.fromList(obj_list);
+		scene.fromList(scene_list);
+		
+		System.out.println("obj len = "+keypoints_list.size()+"scene len"+scene_list.size());
+
+		Mat H = Calib3d.findHomography(obj, scene, Calib3d.RANSAC, 1);
+		
+//		MatOfPoint2f obj_corners = new MatOfPoint2f();
+//		obj_corners[0] = new Point(0,0);
+//		obj_corners[1] = new Point(img_object.cols, 0 );
+//		obj_corners[2] = new Point(img_object.cols, img_object.rows ); 
+//		obj_corners[3] = new Point(0, img_object.rows );
+//		MatOfPoint2f scene_corners = new MatOfPoint2f();;
+		Mat m2_out_warped = new Mat(m2_out.size(), m2_out.type());
+		Imgproc.warpPerspective(m2_out, m2_out_warped, H, m2_out_warped.size());
+//		Core.perspectiveTransform(m2_out, m2_out_warped, H);
+		
+		Imshow im4 = new Imshow("original");
+		im4.showImage(m2);
+		
+		Imshow im5 = new Imshow("changed and rotated");
+		im5.showImage(m2_out_warped);
+	}
 	
+	public static List<DMatch> goodMatches(MatOfDMatch matches) {
+		List<DMatch> matchesList = matches.toList();
+		double maxDistance = 0;
+		double minDistance = 1000;
+
+		int rowCount = matchesList.size();
+		for (int i = 0; i < rowCount; i++) {
+			double dist = matchesList.get(i).distance;
+			if (dist < minDistance)
+				minDistance = dist;
+			if (dist > maxDistance)
+				maxDistance = dist;
+		}
+
+		List<DMatch> goodMatchesList = new ArrayList<DMatch>();
+		double upperBound = 1.5 * minDistance;
+		for (int i = 0; i < rowCount; i++) {
+			if (matchesList.get(i).distance < upperBound) {
+				goodMatchesList.add(matchesList.get(i));
+			}
+		}
+		return goodMatchesList;
+	}
+
+	public static void main(String[] args) {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
+	    
+		String file1 = "distrib/set3/changed/pair_0018_inbound.jpg";
+		String file2 = "distrib/set3/changed/pair_0018_outbound.jpg";
+		
+		Mat m = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m1 = new Mat(m.size(), CvType.CV_8UC1);
+		Mat m1_out = new Mat(m_out.size(), CvType.CV_8UC1);
+
+		m1 = multiChannelHistEq(m);
+		m1_out = multiChannelHistEq(m_out);
+		
+		m1 = GaussPrep.blur(m1, 21);
+		m1_out = GaussPrep.blur(m1_out, 21);
+//		
+//		m1 = Normalize.convertBack(Normalize.normalize(m1));
+//		m1_out = Normalize.convertBack(Normalize.normalize(m1_out));
+		
+		matchFeatures(m1, m1_out);
+		
+		return;
+	}
 }
