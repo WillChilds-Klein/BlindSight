@@ -12,9 +12,9 @@ public class Blob {
 		int nRows = input.rows() / submatrixSize;
 		int nCols = input.cols() / submatrixSize;
 		
-		System.out.println(nRows);
-		System.out.println(nCols);
-		
+//		System.out.println(nRows);
+//		System.out.println(nCols);
+//		
 		double bigSum = sumVector(Core.sumElems(input).val);
 		
 		double[][] output = new double[nRows][nCols];
@@ -27,11 +27,10 @@ public class Blob {
 				output[i][j] = (double) sumVector(Core.sumElems(subMat).val) / (double) bigSum;
 			}
 		}
-		
 		return output;
 	}
 	
-	// returns array: {[maxRatio],[maxRow],[maxCol]}
+	// returns array: {maxRatio,maxRow,maxCol}
 	public static double[] maxToAvgRatio(double[][] arr){
 		double max = -1, sum = 0, ratio, avg;
 		double output[] = new double[3];
@@ -66,9 +65,9 @@ public class Blob {
 //		
 //	}
 	
-	public static boolean isValid(int row, int col, int nRows, int nCols){
+/*	public static boolean isValid(int row, int col, int nRows, int nCols){
 		
-	}
+	}*/
 	
 	public static double sumVector(double[] vec){
 		double sum = 0;
@@ -77,11 +76,12 @@ public class Blob {
 		return sum;
 	}
 	
-	public static void main(String[] args) {
+	public static double doBlob(String file1, String file2) {
+		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
-		Mat m1 = Highgui.imread("set1/changed/pair_0011_inbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat m1_out = Highgui.imread("set1/changed/pair_0011_outbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1 = Highgui.imread(file1,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1_out = Highgui.imread(file2,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
 		Mat m2 = new Mat(m1.size(), m1.type());
 		Mat m2_out = new Mat(m1.size(), m1.type());
 		Mat m3 = new Mat(m1.size(), m1.type());
@@ -112,18 +112,23 @@ public class Blob {
 //		Imshow im2 = new Imshow("fucky subtraction");
 //		im2.showImage(m5_out);
 		
-		Imshow im3 = new Imshow("all mish-mashed togetha");
-		im3.showImage(m6);
+//		Imshow im3 = new Imshow("all mish-mashed togetha");
+//		im3.showImage(m6);
 		
 		int pix = 20;
 		double[][] test = getSubmatrixSums(m6, pix);
-		System.out.println("[" + test.length + ", " + test[0].length + "]");
-		for(int i = 0; i < test.length; i++){
-			System.out.print("[");
-			for(int j = 0; j < test[0].length; j++){
-				System.out.print(test[i][j] + ", ");
-			}
-			System.out.print("]\n");
-		}
+		double ratio = maxToAvgRatio(test)[0]; 
+		
+		
+//		System.out.println("[" + test.length + ", " + test[0].length + "]");
+//		for(int i = 0; i < test.length; i++){
+//			System.out.print("[");
+//			for(int j = 0; j < test[0].length; j++){
+//				System.out.print(test[i][j] + ", ");
+//			}
+//			System.out.print("]\n");
+//		}
+		
+		return ratio; 
 	}
 }	

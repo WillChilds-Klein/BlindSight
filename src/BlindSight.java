@@ -12,12 +12,25 @@ public class BlindSight{
 	
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
-		System.out.println("Correct\tWrong");
-		testAll();
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat input1 = Highgui.imread("/Users/austinstone/Desktop/inbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat input2 = Highgui.imread("/Users/austinstone/Desktop/outbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		EdgyAF.getEdgeConfidence(input1, input2); 
+		//System.out.println("Correct\tWrong");
+		
+		String input1 = args[0];
+		String input2 = args[1];
+		
+		double countConf = GaussPrep.compare(input1, input2); 
+		double ratio = Blob.doBlob(input1, input2); 
+		double confidence = countConf; 
+		if (ratio > 7)
+			confidence = 100; 
+		System.out.println(confidence); 
+		
+		//testAll();
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//		Mat input1 = Highgui.imread("/Users/austinstone/Desktop/inbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+//		Mat input2 = Highgui.imread("/Users/austinstone/Desktop/outbound1.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+//		//EdgyAF.getEdgeConfidence(input1, input2); 
+//		GaussPrep.compare("/Users/austinstone/Desktop/inbound1.jpg", "/Users/austinstone/Desktop/outbound1.jpg");
+//		System.out.println("heeeere"); 
 	}
 	
 	public static void doSubtract() {
@@ -117,7 +130,7 @@ public class BlindSight{
 	
 	public static void testAll(){
 		
-		for(int i = 1; i <=3 ; i++){
+		for(int i = 3; i <=3 ; i++){
 			testMethods(i, true);
 			testMethods(i, false);
 		}
@@ -128,8 +141,9 @@ public class BlindSight{
 		int count = 50, i = 0;
 		
 		DecimalFormat formatter = new DecimalFormat("0000");
-		String beg = "set"+ setNum + "/" + (changed? "changed" : "unchanged") + "/pair_", end1, end2;
-		
+		//String beg = "set"+ setNum + "/" + (changed? "changed" : "unchanged") + "/pair_", end1, end2;
+		String beg = "set"+ setNum + "/" + "changed" + "/pair_", end1, end2;
+
 		if(setNum == 2){
 			end1 = "_before.jpg";
 			end2 = "_later.jpg";
@@ -153,10 +167,11 @@ public class BlindSight{
 			String file1 = beg + formatter.format(i) + end1;
 			String file2 = beg + formatter.format(i) + end2;
 
-			if(GaussPrep.compare(file1, file2) == changed){
+			GaussPrep.compare(file1, file2); 
+			//if(GaussPrep.compare(file1, file2) == changed){
 				numTrue++;
-			}
-			else
+			//}
+			//else
 				numFalse++;
 		}
 		System.out.println(numTrue+"\t"+numFalse);

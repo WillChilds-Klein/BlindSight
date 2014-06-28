@@ -17,7 +17,7 @@ public class Normalize {
 	
 		
 		Mat convert = new Mat(m.rows(), m.cols(), m.type()); 
-		m.convertTo(convert, CvType.CV_8U, 255*255);
+		m.convertTo(convert, CvType.CV_8U, 255*10);
 		//Imgproc.cvtColor(convert, convert, Imgproc.COLOR_GRAY2RGBA,  4); 
 		return convert; 
 	}
