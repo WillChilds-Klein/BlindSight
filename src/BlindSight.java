@@ -10,7 +10,7 @@ public class BlindSight{
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
-		Mat m1 = Highgui.imread("/Users/childskl/Desktop/lena.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m1 = Highgui.imread("distrib/set1/changed/lena.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 //		Mat m2 = new Mat(m1.size(), m1.type());
 		
 		
