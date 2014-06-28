@@ -108,7 +108,7 @@ System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 //		im3.showImage(m6);
 			
 		
-		matchFeatures(m2, m2_out);
+//		matchFeatures(m2, m2_out);
 		
 		return confidence;
 	}

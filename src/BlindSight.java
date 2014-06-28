@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -10,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class BlindSight{
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		//System.out.println("Correct\tWrong");
 		
