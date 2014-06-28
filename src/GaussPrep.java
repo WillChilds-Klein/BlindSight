@@ -20,7 +20,7 @@ import org.opencv.features2d.Features2d;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-import com.atul.JavaOpenCV.Imshow;
+//import com.atul.JavaOpenCV.Imshow;
 
 
 
@@ -167,13 +167,13 @@ System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		MatOfDMatch match = new MatOfDMatch();
 		match.fromList(matchesList2);
 		
-		Imshow im3 = new Imshow("Matches");
+		//Imshow im3 = new Imshow("Matches");
 		
 		Features2d.drawMatches(m2, keypoints, m2_out, keypoints_out,
 				match, m3, new Scalar(0, 255, 0),
 				new Scalar(0, 0, 255), new MatOfByte(),
 				Features2d.NOT_DRAW_SINGLE_POINTS);
-		im3.showImage(m3);
+		//im3.showImage(m3);
 
 	}
 }

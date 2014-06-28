@@ -2,7 +2,7 @@ import org.opencv.core.*;
 //import org.opencv.highgui.*;
 
 //import com.atul.JavaOpenCV.Imshow;
-
+ 
 public class GetEdges {
    
     	

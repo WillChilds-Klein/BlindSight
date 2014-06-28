@@ -4,7 +4,7 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-import com.atul.JavaOpenCV.Imshow;
+//import com.atul.JavaOpenCV.Imshow;
 
 
 public class EdgyAF {
@@ -36,8 +36,8 @@ public class EdgyAF {
 		System.out.println(norm1.dump()); 
 		//System.out.println(norm2.dump()); 
 		
-		Imshow imnorm1 = new Imshow("Image1 norm"); 
-		Imshow imnorm2 = new Imshow("Image2 norm"); 
+		//Imshow imnorm1 = new Imshow("Image1 norm"); 
+		//Imshow imnorm2 = new Imshow("Image2 norm"); 
 		
 		Mat edge1 = GetEdges.getEdges(norm1); 
 		Mat edge2 = GetEdges.getEdges(norm2); 
@@ -45,8 +45,8 @@ public class EdgyAF {
 		int white1 = Core.countNonZero(edge1); 
 		int white2 = Core.countNonZero(edge2); 
 		
-		Imshow imedge1 = new Imshow("Image1 edge"); 
-		Imshow imedge2 = new Imshow("Image2 edge"); 
+		//Imshow imedge1 = new Imshow("Image1 edge"); 
+		//Imshow imedge2 = new Imshow("Image2 edge"); 
 		
 		//imnorm1.showImage(norm1);
 		//imnorm2.showImage(norm2);

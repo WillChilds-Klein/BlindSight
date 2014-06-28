@@ -6,7 +6,7 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-import com.atul.JavaOpenCV.Imshow;
+//import com.atul.JavaOpenCV.Imshow;
 
 public class BlindSight{
 	
@@ -52,7 +52,7 @@ public class BlindSight{
 		    Core.subtract(bwInput1, bwInput2, diffInput1Input2BW);
 		    Core.subtract(bwInput2, bwInput1, diffInput1Input2BWTemp);
 		    Core.add(diffInput1Input2BW, diffInput1Input2BWTemp , diffInput1Input2BW);
-		    Imshow bwDiff = new Imshow("bwDiff for threshold" + i);
+		   // Imshow bwDiff = new Imshow("bwDiff for threshold" + i);
 		   // Imshow bwInput1Im = new Imshow("bwInput1");
 		   // Imshow bwInput2Im = new Imshow("bwInput2");
 		   // Imshow input1Raw = new Imshow("Input1Raw"); 
