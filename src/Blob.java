@@ -41,8 +41,8 @@ public class Blob {
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); 
 		
-		Mat m1 = Highgui.imread("distrib/set1/changed/pair_0011_inbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		Mat m1_out = Highgui.imread("distrib/set1/changed/pair_0011_outbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1 = Highgui.imread("set1/changed/pair_0011_inbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat m1_out = Highgui.imread("set1/changed/pair_0011_outbound.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
 		Mat m2 = new Mat(m1.size(), m1.type());
 		Mat m2_out = new Mat(m1.size(), m1.type());
 		Mat m3 = new Mat(m1.size(), m1.type());
